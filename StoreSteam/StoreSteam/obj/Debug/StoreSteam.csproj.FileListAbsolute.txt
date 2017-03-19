@@ -83,3 +83,4 @@ D:\Study\Web\WebStoreSteam\StoreSteam\StoreSteam\obj\Debug\StoreSteam.pdb
 D:\Study\Web\WebStoreSteam\StoreSteam\StoreSteam\obj\Debug\StoreSteam.Migrations.InitialCreate.resources
 D:\Study\Web\WebStoreSteam\StoreSteam\StoreSteam\obj\Debug\StoreSteam.csproj.GenerateResource.Cache
 D:\Study\Web\WebStoreSteam\StoreSteam\StoreSteam\obj\Debug\StoreSteam.Migrations.StoreTrade.resources
+D:\Study\Web\WebStoreSteam\StoreSteam\StoreSteam\obj\Debug\StoreSteam.Migrations.StoreTrade1.resources

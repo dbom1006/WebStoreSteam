@@ -203,6 +203,10 @@
     <Compile Include="Migrations\201703181804395_StoreTrade.Designer.cs">
       <DependentUpon>201703181804395_StoreTrade.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201703191657591_StoreTrade1.cs" />
+    <Compile Include="Migrations\201703191657591_StoreTrade1.Designer.cs">
+      <DependentUpon>201703191657591_StoreTrade1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\SteamWeb.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -318,6 +322,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201703181804395_StoreTrade.resx">
       <DependentUpon>201703181804395_StoreTrade.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703191657591_StoreTrade1.resx">
+      <DependentUpon>201703191657591_StoreTrade1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

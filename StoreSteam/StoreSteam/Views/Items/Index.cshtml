@@ -50,7 +50,8 @@
             @Html.DisplayFor(modelItem => item.Name)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.IconUrl)
+            <img src="http://cdn.steamcommunity.com/economy/image/@Html.DisplayFor(modelItem => item.IconUrl)" alt="" />
+            
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Color)

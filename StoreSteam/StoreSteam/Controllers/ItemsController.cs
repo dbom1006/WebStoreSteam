@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using StoreSteam.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace StoreSteam.Controllers
 {
@@ -150,15 +151,37 @@ namespace StoreSteam.Controllers
             string response = steamWeb.Fetch(url, "GET");
             try
             {
-                var x= JsonConvert.DeserializeObject<IDictionary<string, object>>(response);
-                var y = JsonConvert.DeserializeObject<List<IDictionary<string, object>>>(x["assets"].ToString());
+                dynamic x= JsonConvert.DeserializeObject(response);
+                var y = x.assets;
 
                 foreach (var i in y)
                 {
-                    var classid = i["classid"];
-                    url= String.Format(@"https://api.steampowered.com/ISteamEconomy/GetAssetClassInfo/v1/?key={0}&format=json&appid={1}&class_count=1&classid0={2}", ApiKey, 570, classid);
+                    string classid = i.classid;
+                    url= String.Format(@"https://api.steampowered.com/ISteamEconomy/GetAssetClassInfo/v1/?key={0}&format=json&appid={1}&class_count=1&classid0={2}", ApiKey, appId, classid);
                     response = steamWeb.Fetch(url, "GET");
-                    var item= JsonConvert.DeserializeObject<IDictionary<string, Item>>(response);
+                    dynamic obj = JsonConvert.DeserializeObject(response);
+                    var obj2 = JsonConvert.DeserializeObject<IDictionary<string,dynamic>>(((object) obj.result).ToString());
+                    if (obj2["success"] == true)
+                    {
+                        Item item = JsonConvert.DeserializeObject<Item>(((object)obj2[classid]).ToString());
+                        item.AppId = appId;
+                        dynamic it = JsonConvert.DeserializeObject(((object)obj2[classid]).ToString());
+                        item.ListTag = new List<Tag>();
+                        foreach (var tag in it.tags)
+                        {
+                            Tag a = JsonConvert.DeserializeObject<Tag>(((object)tag.Value).ToString());
+                            item.ListTag.Add(a);
+                        }
+                        item.ListAction = new List<Models.Action>();
+                        if (it.actions != null)
+                            foreach (var action in it.actions)
+                            {
+                                Models.Action a = JsonConvert.DeserializeObject<Models.Action>(((object)action.Value).ToString());
+                                item.ListAction.Add(a);
+                            }
+                        lst.Add(item);
+                    }
+                    
                 }
                 return lst;
             }
