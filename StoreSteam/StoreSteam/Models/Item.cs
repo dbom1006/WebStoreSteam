@@ -18,6 +18,8 @@ namespace StoreSteam.Models
         public string Name { get; set; }
         [JsonProperty("icon_url")]
         public string IconUrl { get; set; }
+        [JsonProperty("icon_url_large")]
+        public string IconUrlLarge { get; set; }
         [JsonProperty("name_color")]
         public string Color { get; set; }
         [JsonProperty("type")]

@@ -9,68 +9,16 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.AppId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ClassId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IconUrl)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Color)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Type)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Tradable)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Marketable)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.AppId)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ClassId)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            <img src="http://cdn.steamcommunity.com/economy/image/@Html.DisplayFor(modelItem => item.IconUrl)" alt="" />
-            
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Color)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Type)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Tradable)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Marketable)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
-
-</table>
+<div class="clearfix">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-3">
+            <div class="item">
+                <img src="http://cdn.steamcommunity.com/economy/image/@Html.DisplayFor(modelItem => item.IconUrlLarge)/330x192">
+                <p style="font-weight:bold;color:#@Html.DisplayFor(modelItem => item.Color)">
+                    @Html.DisplayFor(modelItem => item.Name)
+                </p>
+            </div>
+        </div>
+    }
+</div>

@@ -19,7 +19,9 @@ namespace StoreSteam.Controllers
         // GET: Items
         public ActionResult Index()
         {
-            return View(apiItem.List(570));
+            List<Item> items = apiItem.List(570);
+            items.AddRange(apiItem.List(730));
+            return View(items);
         }
 
         // GET: Items/Details/5
@@ -129,66 +131,64 @@ namespace StoreSteam.Controllers
     public class ApiItem
     {
         private StoreSteamContext db = new StoreSteamContext();
-        private string ApiKey
+        private List<ApiKey> ApiKey
         {
             get
             {
-                return db.ApiKeys.FirstOrDefault().Key;
+                return db.ApiKeys.ToList();
             }
         }
-        private string SteamId
-        {
-            get
-            {
-                return db.ApiKeys.FirstOrDefault().SteamId;
-            }
-        }
+        
         public List<Item> List(int appId)
         {
-            List<Item> lst = new List<Item>();
-            string url= String.Format(@"http://steamcommunity.com/inventory/{0}/{1}/2/", 76561198145839778, 570);
             SteamWeb steamWeb = new SteamWeb();
-            string response = steamWeb.Fetch(url, "GET");
-            try
+            List<Item> lst = new List<Item>();
+            foreach(ApiKey apiKey in ApiKey)
             {
-                dynamic x= JsonConvert.DeserializeObject(response);
-                var y = x.assets;
-
-                foreach (var i in y)
+                string url = String.Format(@"http://steamcommunity.com/inventory/{0}/{1}/2", apiKey.SteamId, appId);
+                string response = steamWeb.Fetch(url, "GET");
+                try
                 {
-                    string classid = i.classid;
-                    url= String.Format(@"https://api.steampowered.com/ISteamEconomy/GetAssetClassInfo/v1/?key={0}&format=json&appid={1}&class_count=1&classid0={2}", ApiKey, appId, classid);
-                    response = steamWeb.Fetch(url, "GET");
-                    dynamic obj = JsonConvert.DeserializeObject(response);
-                    var obj2 = JsonConvert.DeserializeObject<IDictionary<string,dynamic>>(((object) obj.result).ToString());
-                    if (obj2["success"] == true)
+                    dynamic x = JsonConvert.DeserializeObject(response);
+                    var y = x.assets;
+
+                    foreach (var i in y)
                     {
-                        Item item = JsonConvert.DeserializeObject<Item>(((object)obj2[classid]).ToString());
-                        item.AppId = appId;
-                        dynamic it = JsonConvert.DeserializeObject(((object)obj2[classid]).ToString());
-                        item.ListTag = new List<Tag>();
-                        foreach (var tag in it.tags)
+                        string classid = i.classid;
+                        url = String.Format(@"https://api.steampowered.com/ISteamEconomy/GetAssetClassInfo/v1/?key={0}&format=json&appid={1}&class_count=1&classid0={2}", apiKey.Key, appId, classid);
+                        response = steamWeb.Fetch(url, "GET");
+                        dynamic obj = JsonConvert.DeserializeObject(response);
+                        var obj2 = JsonConvert.DeserializeObject<IDictionary<string, dynamic>>(((object)obj.result).ToString());
+                        if (obj2["success"] == true)
                         {
-                            Tag a = JsonConvert.DeserializeObject<Tag>(((object)tag.Value).ToString());
-                            item.ListTag.Add(a);
-                        }
-                        item.ListAction = new List<Models.Action>();
-                        if (it.actions != null)
-                            foreach (var action in it.actions)
+                            Item item = JsonConvert.DeserializeObject<Item>(((object)obj2[classid]).ToString());
+                            if (item.Tradable == 0) continue;
+                            item.AppId = appId;
+                            dynamic it = JsonConvert.DeserializeObject(((object)obj2[classid]).ToString());
+                            item.ListTag = new List<Tag>();
+                            foreach (var tag in it.tags)
                             {
-                                Models.Action a = JsonConvert.DeserializeObject<Models.Action>(((object)action.Value).ToString());
-                                item.ListAction.Add(a);
+                                Tag a = JsonConvert.DeserializeObject<Tag>(((object)tag.Value).ToString());
+                                item.ListTag.Add(a);
                             }
-                        lst.Add(item);
+                            item.ListAction = new List<Models.Action>();
+                            if (it.actions != null)
+                                foreach (var action in it.actions)
+                                {
+                                    Models.Action a = JsonConvert.DeserializeObject<Models.Action>(((object)action.Value).ToString());
+                                    item.ListAction.Add(a);
+                                }
+                            if (item.IconUrlLarge.Equals("")) item.IconUrlLarge = item.IconUrl;
+                            lst.Add(item);
+                        }
                     }
+                }
+                catch (Exception)
+                {
                     
                 }
-                return lst;
             }
-            catch (Exception)
-            {
-                return new List<Item>();
-            }
+            return lst;
         }
     }
 }
